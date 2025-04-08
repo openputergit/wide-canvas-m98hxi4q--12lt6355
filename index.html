@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RuralCrafts - Handcrafted Treasures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+        .neu-brutal {
+            border: 3px solid #000;
+            box-shadow: 5px 5px 0px #000;
+            transition: all 0.2s ease;
+        }
+        .neu-brutal:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: 7px 7px 0px #000;
+        }
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #ff4d4d;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 12px;
+            border: 2px solid #000;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            position: relative;
+            margin: 5% auto;
+            max-width: 500px;
+            width: 90%;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+        .loading-spinner {
+            border: 5px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 5px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-[#F7E8D0]">
+    <!-- Loading Animation -->
+    <div class="loading" id="loadingAnimation">
+        <div class="flex items-center">
+            <div class="loading-spinner"></div>
+            <div>Loading...</div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-[#C7EFCF] p-4 neu-brutal mb-8">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <a href="/" class="text-2xl font-bold mb-4 md:mb-0">RuralCrafts</a>
+            <div class="flex flex-wrap items-center gap-3 md:gap-6 justify-center">
+                <a href="#products" class="neu-brutal bg-[#FFA69E] px-4 py-2">Products</a>
+                <a href="#workshops" class="neu-brutal bg-[#93E1D8] px-4 py-2">Workshops</a>
+                <div class="relative">
+                    <button onclick="openCartModal()" class="neu-brutal bg-white p-2">
+                        <i class="bi bi-cart3 text-xl"></i>
+                        <span class="cart-badge" id="cartCount">0</span>
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="openLoginModal('user')" class="neu-brutal bg-[#FFD93D] px-4 py-2">Login</button>
+                    <button onclick="openRegisterModal('user')" class="neu-brutal bg-[#FF6B6B] px-4 py-2">Register</button>
+                </div>
+                <div class="flex gap-2 mt-3 md:mt-0">
+                    <button onclick="openLoginModal('seller')" class="neu-brutal bg-[#ACD7EC] px-4 py-2">Seller Login</button>
+                    <button onclick="openRegisterModal('seller')" class="neu-brutal bg-[#FFB347] px-4 py-2">Become Seller</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="container mx-auto px-4 mb-16">
+        <div class="neu-brutal bg-white p-8 flex flex-col md:flex-row gap-8">
+            <div class="flex-1">
+                <h1 class="text-5xl font-bold mb-4">Handcrafted Treasures</h1>
+                <p class="text-xl mb-6">Discover authentic mud sculptures, wooden furniture, and artisan crafts made by rural artisans</p>
+                <a href="#products" class="inline-block neu-brutal bg-[#FFD93D] px-6 py-3 text-lg">Shop Now</a>
+            </div>
+            <div class="flex-1">
+                <img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61" alt="Mud Sculpture" class="w-full h-[400px] object-cover neu-brutal">
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section id="products" class="container mx-auto px-4 mb-16">
+        <h2 class="text-3xl font-bold mb-8">Our Rural Artisan Products</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="productsContainer">
+            <!-- Product Card 1 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1578749556568-bc2c40e68b61" alt="Mud Sculpture" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Traditional Mud Sculpture</h3>
+                <p class="mb-4">Handcrafted by local artisans using natural clay</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹1,200</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Traditional Mud Sculpture', 1200, 'https://images.unsplash.com/photo-1578749556568-bc2c40e68b61')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <!-- Product Card 2 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267" alt="Wooden Table" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Rustic Wooden Table</h3>
+                <p class="mb-4">Hand-carved from sustainable teak wood</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹4,500</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Rustic Wooden Table', 4500, 'https://images.unsplash.com/photo-1592078615290-033ee584e267')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <!-- Product Card 3 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1567538096621-38d2284b23ff" alt="Wooden Chair" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Artisan Wooden Chair</h3>
+                <p class="mb-4">Traditional design with modern comfort</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹2,800</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Artisan Wooden Chair', 2800, 'https://images.unsplash.com/photo-1567538096621-38d2284b23ff')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <!-- Product Card 4 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1485955900006-10f4d324d411" alt="Flower Pots" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Handmade Clay Flower Pots</h3>
+                <p class="mb-4">Set of 3 decorative pots with intricate designs</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹850</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Handmade Clay Flower Pots', 850, 'https://images.unsplash.com/photo-1485955900006-10f4d324d411')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <!-- Product Card 5 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a" alt="Bangles" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Traditional Beaded Bangles</h3>
+                <p class="mb-4">Handcrafted glass bangles with colorful designs</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹499</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Traditional Beaded Bangles', 499, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a')">Add to Cart</button>
+                </div>
+            </div>
+            
+            <!-- Product Card 6 -->
+            <div class="neu-brutal bg-white p-4">
+                <img src="https://images.unsplash.com/photo-1610701596061-2ecf227e85b2" alt="Wall Hanging" class="w-full h-48 object-cover mb-4 neu-brutal">
+                <h3 class="text-xl font-bold mb-2">Macrame Wall Hanging</h3>
+                <p class="mb-4">Hand-knotted cotton with natural wooden beads</p>
+                <div class="flex justify-between items-center">
+                    <span class="text-xl font-bold">₹1,800</span>
+                    <button class="neu-brutal bg-[#93E1D8] px-4 py-2" onclick="addToCart('Macrame Wall Hanging', 1800, 'https://images.unsplash.com/photo-1610701596061-2ecf227e85b2')">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workshop Section -->
+    <section id="workshops" class="container mx-auto px-4 mb-16">
+        <div class="neu-brutal bg-[#FFD93D] p-8">
+            <h2 class="text-3xl font-bold mb-4">Upcoming Workshops</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="neu-brutal bg-white p-4">
+                    <h3 class="text-xl font-bold mb-2">Pottery Workshop</h3>
+                    <p class="mb-2">Learn traditional pottery techniques from master artisans</p>
+                    <p class="mb-4">Date: 25th December 2023 | Time: 10:00 AM</p>
+                    <button class="neu-brutal bg-[#FF6B6B] px-4 py-2" onclick="registerForWorkshop('Pottery Workshop')">Register Now</button>
+                </div>
+                
+                <div class="neu-brutal bg-white p-4">
+                    <h3 class="text-xl font-bold mb-2">Woodcarving Basics</h3>
+                    <p class="mb-2">Learn essential woodcarving techniques and tools</p>
+                    <p class="mb-4">Date: 10th January 2024 | Time: 11:00 AM</p>
+                    <button class="neu-brutal bg-[#FF6B6B] px-4 py-2" onclick="registerForWorkshop('Woodcarving Basics')">Register Now</button>
+                </div>
+                
+                <div class="neu-brutal bg-white p-4">
+                    <h3 class="text-xl font-bold mb-2">Bangle Making Class</h3>
+                    <p class="mb-2">Create your own set of beaded bangles</p>
+                    <p class="mb-4">Date: 15th January 2024 | Time: 3:00 PM</p>
+                    <button class="neu-brutal bg-[#FF6B6B] px-4 py-2" onclick="registerForWorkshop('Bangle Making Class')">Register Now</button>
+                </div>
+                
+                <div class="neu-brutal bg-white p-4">
+                    <h3 class="text-xl font-bold mb-2">Clay Sculpture Masterclass</h3>
+                    <p class="mb-2">Advanced techniques for creating detailed clay sculptures</p>
+                    <p class="mb-4">Date: 5th February 2024 | Time: 9:00 AM</p>
+                    <button class="neu-brutal bg-[#FF6B6B] px-4 py-2" onclick="registerForWorkshop('Clay Sculpture Masterclass')">Register Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Store Location -->
+    <section class="container mx-auto px-4 mb-16">
+        <h2 class="text-3xl font-bold mb-8">Visit Our Store</h2>
+        <div class="neu-brutal bg-white p-4">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3506.2233913121413!2d77.4051!3d28.5021!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjjCsDMwJzA3LjYiTiA3N8KwMjQnMTguNCJF!5e0!3m2!1sen!2sin!4v1631234567890!5m2!1sen!2sin"
+                width="100%" 
+                height="450" 
+                style="border:0;" 
+                allowfullscreen="" 
+                loading="lazy"
+                class="neu-brutal">
+            </iframe>
+            <div class="mt-4 p-4 neu-brutal bg-[#ACD7EC]">
+                <h3 class="text-xl font-bold mb-2">RuralCrafts Main Store</h3>
+                <p>123 Artisan Street, Craft Village</p>
+                <p>Delhi NCR, India - 110001</p>
+                <p>Open daily: 9 AM - 8 PM</p>
+                <p>Contact: +91 98765 43210</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#C7EFCF] p-8 neu-brutal">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">RuralCrafts</h3>
+                <p>Supporting rural artisans and their crafts since 2010</p>
+                <p class="mt-2">Bridging traditional craftsmanship with modern markets</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Contact</h3>
+                <p>Email: info@ruralcrafts.com</p>
+                <p>Phone: +91 98765 43210</p>
+                <p>Address: 123 Artisan Street, Delhi</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Follow Us</h3>
+                <div class="flex gap-4">
+                    <a href="#" class="text-2xl"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="text-2xl"><i class="bi bi-instagram"></i></a>
+                    <a href="#" class="text-2xl"><i class="bi bi-twitter"></i></a>
+                    <a href="#" class="text-2xl"><i class="bi bi-youtube"></i></a>
+                </div>
+                <div class="mt-4">
+                    <p>Subscribe to our newsletter:</p>
+                    <div class="flex mt-2">
+                        <input type="email" placeholder="Your email" class="border-2 border-black p-2 w-full">
+                        <button class="neu-brutal bg-[#FF6B6B] px-4">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- User Login Modal -->
+    <div id="userLoginModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">User Login</h2>
+                <button onclick="closeModal('userLoginModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="userLoginForm">
+                <div class="mb-4">
+                    <label for="userEmail" class="block mb-2">Email</label>
+                    <input type="email" id="userEmail" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="userPassword" class="block mb-2">Password</label>
+                    <input type="password" id="userPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#FFD93D] p-3 mt-2">Login</button>
+                <p class="mt-4 text-center">Don't have an account? <button type="button" onclick="switchToRegister('user')" class="text-blue-600">Register</button></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Register Modal -->
+    <div id="userRegisterModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">User Registration</h2>
+                <button onclick="closeModal('userRegisterModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="userRegisterForm">
+                <div class="mb-4">
+                    <label for="registerUsername" class="block mb-2">Username</label>
+                    <input type="text" id="registerUsername" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="registerEmail" class="block mb-2">Email</label>
+                    <input type="email" id="registerEmail" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="registerPassword" class="block mb-2">Password</label>
+                    <input type="password" id="registerPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="confirmPassword" class="block mb-2">Confirm Password</label>
+                    <input type="password" id="confirmPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#FF6B6B] p-3 mt-2">Register</button>
+                <p class="mt-4 text-center">Already have an account? <button type="button" onclick="switchToLogin('user')" class="text-blue-600">Login</button></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seller Login Modal -->
+    <div id="sellerLoginModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Seller Login</h2>
+                <button onclick="closeModal('sellerLoginModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="sellerLoginForm">
+                <div class="mb-4">
+                    <label for="sellerEmail" class="block mb-2">Email</label>
+                    <input type="email" id="sellerEmail" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerPassword" class="block mb-2">Password</label>
+                    <input type="password" id="sellerPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#ACD7EC] p-3 mt-2">Login</button>
+                <p class="mt-4 text-center">Don't have a seller account? <button type="button" onclick="switchToRegister('seller')" class="text-blue-600">Register</button></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Seller Register Modal -->
+    <div id="sellerRegisterModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Seller Registration</h2>
+                <button onclick="closeModal('sellerRegisterModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="sellerRegisterForm">
+                <div class="mb-4">
+                    <label for="sellerName" class="block mb-2">Seller Name/Business Name</label>
+                    <input type="text" id="sellerName" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerRegisterEmail" class="block mb-2">Email</label>
+                    <input type="email" id="sellerRegisterEmail" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerRegisterPassword" class="block mb-2">Password</label>
+                    <input type="password" id="sellerRegisterPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerConfirmPassword" class="block mb-2">Confirm Password</label>
+                    <input type="password" id="sellerConfirmPassword" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerPhone" class="block mb-2">Phone Number</label>
+                    <input type="tel" id="sellerPhone" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="sellerAddress" class="block mb-2">Address</label>
+                    <textarea id="sellerAddress" class="w-full p-3 neu-brutal" rows="2" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="craftCategory" class="block mb-2">Craft Category</label>
+                    <select id="craftCategory" class="w-full p-3 neu-brutal" required>
+                        <option value="">Select a category</option>
+                        <option value="pottery">Pottery & Clay Work</option>
+                        <option value="woodwork">Woodwork & Furniture</option>
+                        <option value="textiles">Textiles & Fabrics</option>
+                        <option value="jewelry">Jewelry & Accessories</option>
+                        <option value="other">Other Crafts</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#FFB347] p-3 mt-2">Register as Seller</button>
+                <p class="mt-4 text-center">Already have a seller account? <button type="button" onclick="switchToLogin('seller')" class="text-blue-600">Login</button></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Shopping Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6" style="max-width: 800px;">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Your Shopping Cart</h2>
+                <button onclick="closeModal('cartModal')" class="text-2xl">&times;</button>
+            </div>
+            <div id="cartItems" class="mb-4">
+                <!-- Cart items will be inserted here -->
+                <p id="emptyCartMessage" class="text-center py-8">Your cart is empty</p>
+            </div>
+            <div id="cartSummary" class="border-t-2 border-black pt-4 mb-4">
+                <div class="flex justify-between text-lg">
+                    <span>Total:</span>
+                    <span id="cartTotal">₹0</span>
+                </div>
+            </div>
+            <button id="checkoutButton" onclick="proceedToCheckout()" class="w-full neu-brutal bg-[#FF6B6B] p-3 mt-2" disabled>Proceed to Checkout</button>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkoutModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Checkout</h2>
+                <button onclick="closeModal('checkoutModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="checkoutForm">
+                <div class="mb-4">
+                    <label for="fullName" class="block mb-2">Full Name</label>
+                    <input type="text" id="fullName" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block mb-2">Email</label>
+                    <input type="email" id="email" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="phone" class="block mb-2">Phone Number</label>
+                    <input type="tel" id="phone" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="address" class="block mb-2">Delivery Address</label>
+                    <textarea id="address" class="w-full p-3 neu-brutal" rows="3" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="city" class="block mb-2">City</label>
+                    <input type="text" id="city" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="pincode" class="block mb-2">Pincode</label>
+                    <input type="text" id="pincode" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <p class="block mb-2 font-bold">Payment Method</p>
+                    <div class="p-3 neu-brutal bg-[#FFD93D]">
+                        <label class="flex items-center">
+                            <input type="radio" name="paymentMethod" value="cod" checked class="mr-2">
+                            Cash on Delivery
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-4 p-4 neu-brutal bg-[#ACD7EC]">
+                    <h3 class="font-bold mb-2">Order Summary</h3>
+                    <div id="orderSummary">
+                        <!-- Order details will be inserted here -->
+                    </div>
+                    <div class="flex justify-between mt-4 font-bold">
+                        <span>Total:</span>
+                        <span id="orderTotal">₹0</span>
+                    </div>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#FF6B6B] p-3 mt-2">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Order Confirmation Modal -->
+    <div id="orderConfirmationModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Order Confirmed!</h2>
+                <button onclick="closeModal('orderConfirmationModal')" class="text-2xl">&times;</button>
+            </div>
+            <div class="text-center p-6">
+                <i class="bi bi-check-circle-fill text-green-500 text-6xl mb-4"></i>
+                <h3 class="text-xl mb-4">Thank you for your order!</h3>
+                <p class="mb-2">Your order has been placed successfully.</p>
+                <p class="mb-4">A confirmation email has been sent to your email address.</p>
+                <p class="mb-4">The seller has also been notified of your purchase.</p>
+                <button onclick="finishOrder()" class="neu-brutal bg-[#FFD93D] px-6 py-2 mt-4">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workshop Registration Modal -->
+    <div id="workshopModal" class="modal">
+        <div class="modal-content neu-brutal bg-white p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-2xl font-bold">Register for Workshop</h2>
+                <button onclick="closeModal('workshopModal')" class="text-2xl">&times;</button>
+            </div>
+            <form id="workshopForm">
+                <div class="mb-4">
+                    <label for="workshopName" class="block mb-2">Workshop</label>
+                    <input type="text" id="workshopName" class="w-full p-3 neu-brutal" readonly>
+                </div>
+                <div class="mb-4">
+                    <label for="participantName" class="block mb-2">Full Name</label>
+                    <input type="text" id="participantName" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="participantEmail" class="block mb-2">Email</label>
+                    <input type="email" id="participantEmail" class="w-full p-3 neu-brutal" required>
+                </div>
+                <div class="mb-4">
+                    <label for="participantPhone" class="block mb-2">Phone Number</label>
+                    <input type="tel" id="participantPhone" class="w-full p-3 neu-brutal" required>
+                </div>
+                <button type="submit" class="w-full neu-brutal bg-[#FF6B6B] p-3 mt-2">Confirm Registration</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // MongoDB API configuration
+        const API_URL = 'https://r0c8kgwocscg8gsokogwwsw4.zetaverse.one/mongodb';
+        const API_KEY = 'Bearer fKGStGevkJStwRchtaVkb4hnV7F3';
+        const APP_SLUG = 'ruralcrafts-app-289456';
+
+        // Cart functionality
+        let cart = [];
+        let cartTotal = 0;
+        const cartBadge = document.getElementById('cartCount');
+        
+        // Show loading animation
+        function showLoading() {
+            document.getElementById('loadingAnimation').style.display = 'flex';
+        }
+        
+        // Hide loading animation
+        function hideLoading() {
+            document.getElementById('loadingAnimation').style.display = 'none';
+        }
+        
+        // Open modal function
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        // Close modal function
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        // Switch between login and register modals
+        function switchToRegister(userType) {
+            if (userType === 'user') {
+                closeModal('userLoginModal');
+                openModal('userRegisterModal');
+            } else {
+                closeModal('sellerLoginModal');
+                openModal('sellerRegisterModal');
+            }
+        }
+        
+        function switchToLogin(userType) {
+            if (userType === 'user') {
+                closeModal('userRegisterModal');
+                openModal('userLoginModal');
+            } else {
+                closeModal('sellerRegisterModal');
+                openModal('sellerLoginModal');
+            }
+        }
+        
+        // Open login modal
+        function openLoginModal(userType) {
+            if (userType === 'user') {
+                openModal('userLoginModal');
+            } else {
+                openModal('sellerLoginModal');
+            }
+        }
+        
+        // Open register modal
+        function openRegisterModal(userType) {
+            if (userType === 'user') {
+                openModal('userRegisterModal');
+            } else {
+                openModal('sellerRegisterModal');
+            }
+        }
+        
+        // Add to cart function
+        function addToCart(name, price, image) {
+            const existingItemIndex = cart.findIndex(item => item.name === name);
+            
+            if (existingItemIndex !== -1) {
+                // Item already exists, increase quantity
+                cart[existingItemIndex].quantity++;
+            } else {
+                // Add new item
+                cart.push({
+                    name: name,
+                    price: price,
+                    image: image,
+                    quantity: 1
+                });
+            }
+            
+            updateCartBadge();
+            showNotification(`${name} added to cart!`);
+        }
+        
+        // Update cart badge
+        function updateCartBadge() {
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            cartBadge.textContent = totalItems;
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'fixed top-4 right-4 neu-brutal bg-white p-4 z-50';
+            notification.innerHTML = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Open cart modal
+        function openCartModal() {
+            const cartItemsContainer = document.getElementById('cartItems');
+            const emptyCartMessage = document.getElementById('emptyCartMessage');
+            const cartTotalElement = document.getElementById('cartTotal');
+            const checkoutButton = document.getElementById('checkoutButton');
+            
+            // Clear previous items
+            cartItemsContainer.innerHTML = '';
+            
+            if (cart.length === 0) {
+                cartItemsContainer.appendChild(emptyCartMessage);
+                checkoutButton.disabled = true;
+                cartTotalElement.textContent = '₹0';
+            } else {
+                emptyCartMessage.remove();
+                checkoutButton.disabled = false;
+                
+                // Calculate total
+                cartTotal = cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+                cartTotalElement.textContent = `₹${cartTotal.toLocaleString()}`;
+                
+                // Add each item to cart
+                cart.forEach((item, index) => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'flex items-center mb-4 p-4 neu-brutal bg-white';
+                    itemElement.innerHTML = `
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover mr-4 neu-brutal">
+                        <div class="flex-1">
+                            <h3 class="font-bold">${item.name}</h3>
+                            <p>₹${item.price.toLocaleString()} × ${item.quantity}</p>
+                        </div>
+                        <div class="flex items-center">
+                            <button onclick="decreaseQuantity(${index})" class="neu-brutal px-3 py-1 mr-2">-</button>
+                            <span class="px-2">${item.quantity}</span>
+                            <button onclick="increaseQuantity(${index})" class="neu-brutal px-3 py-1 ml-2">+</button>
+                            <button onclick="removeFromCart(${index})" class="neu-brutal px-3 py-1 ml-4 text-red-600"><i class="bi bi-trash"></i></button>
+                        </div>
+                    `;
+                    cartItemsContainer.appendChild(itemElement);
+                });
+            }
+            
+            openModal('cartModal');
+        }
+        
+        // Increase item quantity
+        function increaseQuantity(index) {
+            cart[index].quantity++;
+            updateCartBadge();
+            openCartModal(); // Refresh the cart modal
+        }
+        
+        // Decrease item quantity
+        function decreaseQuantity(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+            } else {
+                removeFromCart(index);
+            }
+            updateCartBadge();
+            openCartModal(); // Refresh the cart modal
+        }
+        
+        // Remove item from cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartBadge();
+            openCartModal(); // Refresh the cart modal
+        }
+        
+        // Proceed to checkout
+        function proceedToCheckout() {
+            if (cart.length === 0) return;
+            
+            const orderSummaryContainer = document.getElementById('orderSummary');
+            const orderTotalElement = document.getElementById('orderTotal');
+            
+            // Clear previous items
+            orderSummaryContainer.innerHTML = '';
+            
+            // Add each item to order summary
+            cart.forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'flex justify-between mb-2';
+                itemElement.innerHTML = `
+                    <span>${item.name} × ${item.quantity}</span>
+                    <span>₹${(item.price * item.quantity).toLocaleString()}</span>
+                `;
+                orderSummaryContainer.appendChild(itemElement);
+            });
+            
+            // Set order total
+            orderTotalElement.textContent = `₹${cartTotal.toLocaleString()}`;
+            
+            closeModal('cartModal');
+            openModal('checkoutModal');
+        }
+        
+        // Register for workshop
+        function registerForWorkshop(workshopName) {
+            document.getElementById('workshopName').value = workshopName;
+            openModal('workshopModal');
+        }
+        
+        // Simulate database operations with MongoDB API
+        async function sendToDatabase(action, collection, data = {}, conditions = {}, id = null) {
+            showLoading();
+            
+            try {
+                const requestBody = {
+                    appSlug: APP_SLUG,
+                    action: action,
+                    collection: collection
+                };
+                
+                if (data && Object.keys(data).length > 0) {
+                    requestBody.data = data;
+                }
+                
+                if (conditions && Object.keys(conditions).length > 0) {
+                    requestBody.conditions = conditions;
+                }
+                
+                if (id) {
+                    requestBody.id = id;
+                }
+                
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': API_KEY,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const result = await response.json();
+                return result;
+            } catch (error) {
+                console.error('Database error:', error);
+                showNotification('An error occurred. Please try again.');
+                return null;
+            } finally {
+                hideLoading();
+            }
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // User registration form
+            document.getElementById('userRegisterForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('registerUsername').value;
+                const email = document.getElementById('registerEmail').value;
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                if (password !== confirmPassword) {
+                    showNotification('Passwords do not match!');
+                    return;
+                }
+                
+                // Check if email already exists
+                const existingUser = await sendToDatabase('read', 'users', {}, { email: email });
+                
+                if (existingUser && existingUser.success && existingUser.result.length > 0) {
+                    showNotification('Email already in use!');
+                    return;
+                }
+                
+                // Create new user
+                const result = await sendToDatabase('create', 'users', {
+                    username: username,
+                    email: email,
+                    password: password, // In a real app, this should be hashed
+                    role: 'user',
+                    created_at: new Date().toISOString()
+                });
+                
+                if (result && result.success) {
+                    showNotification('Registration successful! Please login.');
+                    closeModal('userRegisterModal');
+                    openModal('userLoginModal');
+                } else {
+                    showNotification('Registration failed. Please try again.');
+                }
+            });
+            
+            // User login form
+            document.getElementById('userLoginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('userEmail').value;
+                const password = document.getElementById('userPassword').value;
+                
+                // Authenticate user
+                const result = await sendToDatabase('read', 'users', {}, { 
+                    email: email, 
+                    password: password 
+                });
+                
+                if (result && result.success && result.result.length > 0) {
+                    showNotification('Login successful!');
+                    // In a real app, you would store user session here
+                    closeModal('userLoginModal');
+                } else {
+                    showNotification('Invalid email or password');
+                }
+            });
+            
+            // Seller registration form
+            document.getElementById('sellerRegisterForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const sellerName = document.getElementById('sellerName').value;
+                const email = document.getElementById('sellerRegisterEmail').value;
+                const password = document.getElementById('sellerRegisterPassword').value;
+                const confirmPassword = document.getElementById('sellerConfirmPassword').value;
+                const phone = document.getElementById('sellerPhone').value;
+                const address = document.getElementById('sellerAddress').value;
+                const craftCategory = document.getElementById('craftCategory').value;
+                
+                if (password !== confirmPassword) {
+                    showNotification('Passwords do not match!');
+                    return;
+                }
+                
+                // Check if email already exists
+                const existingSeller = await sendToDatabase('read', 'sellers', {}, { email: email });
+                
+                if (existingSeller && existingSeller.success && existingSeller.result.length > 0) {
+                    showNotification('Email already in use!');
+                    return;
+                }
+                
+                // Create new seller
+                const result = await sendToDatabase('create', 'sellers', {
+                    seller_name: sellerName,
+                    email: email,
+                    password: password, // In a real app, this should be hashed
+                    phone: phone,
+                    address: address,
+                    craft_category: craftCategory,
+                    created_at: new Date().toISOString()
+                });
+                
+                if (result && result.success) {
+                    showNotification('Seller registration successful! Please login.');
+                    closeModal('sellerRegisterModal');
+                    openModal('sellerLoginModal');
+                } else {
+                    showNotification('Registration failed. Please try again.');
+                }
+            });
+            
+            // Seller login form
+            document.getElementById('sellerLoginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('sellerEmail').value;
+                const password = document.getElementById('sellerPassword').value;
+                
+                // Authenticate seller
+                const result = await sendToDatabase('read', 'sellers', {}, { 
+                    email: email, 
+                    password: password 
+                });
+                
+                if (result && result.success && result.result.length > 0) {
+                    showNotification('Seller login successful!');
+                    // In a real app, you would store seller session here
+                    closeModal('sellerLoginModal');
+                } else {
+                    showNotification('Invalid email or password');
+                }
+            });
+            
+            // Checkout form
+            document.getElementById('checkoutForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('fullName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const address = document.getElementById('address').value;
+                const city = document.getElementById('city').value;
+                const pincode = document.getElementById('pincode').value;
+                
+                // Create order in database
+                const order = {
+                    customer_name: fullName,
+                    customer_email: email,
+                    customer_phone: phone,
+                    delivery_address: address,
+                    city: city,
+                    pincode: pincode,
+                    items: cart,
+                    total_amount: cartTotal,
+                    payment_method: 'Cash on Delivery',
+                    order_status: 'Placed',
+                    order_date: new Date().toISOString()
+                };
+                
+                const result = await sendToDatabase('create', 'orders', order);
+                
+                if (result && result.success) {
+                    // In a real app, this would send emails to both user and seller
+                    
+                    closeModal('checkoutModal');
+                    openModal('orderConfirmationModal');
+                    // Clear cart after successful order
+                    cart = [];
+                    updateCartBadge();
+                } else {
+                    showNotification('Order placement failed. Please try again.');
+                }
+            });
+            
+            // Workshop registration form
+            document.getElementById('workshopForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const workshopName = document.getElementById('workshopName').value;
+                const name = document.getElementById('participantName').value;
+                const email = document.getElementById('participantEmail').value;
+                const phone = document.getElementById('participantPhone').value;
+                
+                // Create workshop registration in database
+                const registration = {
+                    workshop_name: workshopName,
+                    participant_name: name,
+                    participant_email: email,
+                    participant_phone: phone,
+                    registration_date: new Date().toISOString()
+                };
+                
+                const result = await sendToDatabase('create', 'workshop_registrations', registration);
+                
+                if (result && result.success) {
+                    showNotification('Workshop registration successful!');
+                    // In a real app, this would send a confirmation email
+                    
+                    closeModal('workshopModal');
+                } else {
+                    showNotification('Registration failed. Please try again.');
+                }
+            });
+        });
+        
+        // Finish order and return to shopping
+        function finishOrder() {
+            closeModal('orderConfirmationModal');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+<script>document.body.addEventListener('wheel', e => { if (!e.ctrlKey) return; e.preventDefault(); return }, { passive: false })</script>
+	</body>
+</html>
